@@ -1,5 +1,7 @@
 {
     "require": {
-        "vlucas/phpdotenv": "^4.0"
+        "vlucas/phpdotenv": "^4.0",
+        "simplon/mysql": "^2.2",
+        "jenssegers/blade": "^1.2"
     }
 }

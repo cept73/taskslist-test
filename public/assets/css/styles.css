@@ -1,0 +1,20 @@
+/* Tasks list page */
+
+.column-mini {
+    width: 30px
+}
+
+#tasks_list tr.selected {
+    background: cadetblue;
+    color: white;
+}
+
+/* Global fix */
+
+body {
+    cursor: default;
+}
+
+.error {
+    color: red;
+}
