@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $lang ?? 'en' }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,5 +46,9 @@
 
     <!-- Custom scripts for all pages-->
     <script src="public/assets/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    @yield('js')
+
 </body>
 </html>
