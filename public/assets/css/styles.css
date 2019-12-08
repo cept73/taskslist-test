@@ -24,6 +24,20 @@
     }
 }
 
+
+/* Login page */
+
+form.user .form-control-user {
+    font-size: 1rem;
+    color: black;
+    border-color: #4e73df;
+}
+
+form.user .btn-user {
+    font-size: 1rem;
+}
+
+
 /* Global fix */
 
 body {

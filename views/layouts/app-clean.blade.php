@@ -10,7 +10,7 @@
     <title>Task List &ndash; @yield('title')</title>
 
     <!-- Base -->
-    <base href="/" />
+    <base href="{{ $site_url ?? '/' }}" />
 
     <!-- Custom fonts for this template -->
     <link href="public/assets/lib/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -18,6 +18,9 @@
 
     <!-- Custom styles for this template -->
     <link href="public/assets/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- User defined styles -->
+    <link href="public/assets/css/styles.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-primary">
 

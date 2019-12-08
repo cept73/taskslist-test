@@ -23,7 +23,7 @@
             <form class="user" method="post">
                 <div class="form-group">
                     <input type="login" class="form-control form-control-user" name="login" id="InputLogin" aria-describedby="loginHelp" placeholder="Enter Login..."
-                        value="@if (isset($login)) {{ $login }} @endif">
+                        value="@if (isset($login)){{ $login }}@endif">
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control form-control-user" name="password" id="InputPassword" placeholder="Password">
