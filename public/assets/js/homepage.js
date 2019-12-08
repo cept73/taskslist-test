@@ -1,6 +1,8 @@
 
 /* Selected row in the table */
 var selectedTask = null;
+// Table
+var tasksList = null;
 
 
 /* Render of checkboxes */
