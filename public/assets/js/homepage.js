@@ -83,7 +83,16 @@ function tableSelect(row)
 
 function hideAlert()
 {
-    $('div.alert').hide('fast');
+    $('div.alert').addClass('d-none');
+}
+
+
+function showAlert(type)
+{
+    hideAlert();
+
+    if (type == 'error' || type == 'success')
+        $("#alert-" + type).removeClass('d-none');
 }
 
 
@@ -96,7 +105,7 @@ $(document).ready(function() {
     table.on('draw.dt', function() {
         onInitpage(table);
     });
-    table.DataTable({
+    tasksList = table.DataTable({
         columns: [
             { data: 'id' },
             { data: 'task' },
@@ -106,29 +115,37 @@ $(document).ready(function() {
             { data: 'admin_edit', render: renderAdmineditCheckbox }
         ],
         ajax: {
-            url: '/?path=tasks',
+            url: '/tasks',
             dataSrc: 'table',
         },
         lengthMenu: [ 3, 5, 10 ],
-        /*initComplete: function(settings) {
-
-            onInitpage(table);
-       
-        }*/
     });
-
- 
-/*    $('#button').click(function() {
-        table.row('.selected').remove().draw(false);
-    });*/
 
 
     // Validate fields in the form
     var formAdd = $('form#add-task');
     formAdd.validate();
+    formAdd.ajaxForm({
+        success: function(responseText, _, _, _) {
+            var data = $.parseJSON(responseText);
+            if (data.success) {
+                // Show message
+                $("#alert-success").html(data.message);
+                showAlert('success');
+
+                // Refresh table
+                tasksList.ajax.reload()
+            }
+            else {
+                // Show message
+                $("#alert-error").html(data.message);
+                showAlert('error');
+            }
+        }
+    });
 
     // Hide alert if any
-    $('input, textarea', formAdd).on('change', hideAlert);
+    $('input, textarea', formAdd).on('keydown', hideAlert);
     setTimeout(hideAlert, 5000);
 
     // Validate

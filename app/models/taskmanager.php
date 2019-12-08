@@ -78,6 +78,50 @@ class TasksManager extends BaseModel {
         return true;
     }
 
+    function validateRequest($operation, $task)
+    {
+        // Overall checklist to validation
+        $checksOverallList = [
+            'addTask' => [1],
+            'updateTask' => [1,2,3]
+        ];
+
+        // Get checklist for operation
+        $checks = $checksOverallList[$operation] ?? [];
+
+        // #1 Validate data first
+        if (in_array(1, $checks)) {
+            if (!$this->validateNewTask($task))
+                return [
+                    'success' => false,
+                    'message' => 'Validation failed' 
+                ];
+        }
+
+        // #2 ID might be specified in some cases
+        if (in_array(2, $checks)) {
+            if (empty($task['id']))
+                return [
+                    'success' => false,
+                    'message' => 'ID is not specified'
+                ];
+        }
+
+        // #3 Edit only for admins
+        if (in_array(3, $checks)) {
+            if (!$this->user->isAdmin())
+                return [
+                    'success' => false,
+                    'message' => 'Admin rights required'
+                ];
+        }
+
+        // Else - validation complete successfully
+        return [
+            'success' => true
+        ];
+    }
+
     /**
      * Add task
      * 
@@ -86,9 +130,9 @@ class TasksManager extends BaseModel {
      */
     function addTask($task)
     {
-        // Validate data first
-        if (!$this->validateNewTask($task))
-            return false;
+        $validation = $this->validateRequest('addTask', $task);
+        if ($validation['success'] == false)
+            return $validation;
 
         // Task properties
         $newProperties = [
@@ -102,10 +146,15 @@ class TasksManager extends BaseModel {
                 $newProperties['completed'] = $this->isChecked($task, 'taskCompleted');
         }
 
-        return $this->database->insert(
+        $successfully = $this->database->insert(
             $this->database->getTableName(),
             $newProperties
         );
+
+        return [
+            'success' => $successfully,
+            'message' => $successfully ? 'Task added successfully' : 'Task add failed'
+        ];
     }
 
     function isChecked($array, $flag)
@@ -123,18 +172,9 @@ class TasksManager extends BaseModel {
      */
     function updateTask($task)
     {
-        // Validate data first
-        if (!$this->validateNewTask($task))
-            return false;
-
-        // Might be specified id
-        if (empty($task['id']))
-            return false;
-
-        // Edit only for admins
-        if (!$this->user->isAdmin()) {
-            return false;
-        }
+        $validation = $this->validateRequest('updateTask', $task);
+        if ($validation['success'] == false)
+            return $validation;
 
         // Task properties
         $newProperties = [
@@ -145,11 +185,16 @@ class TasksManager extends BaseModel {
             'admin_edit' => 1
         ];
 
-        return $this->database->update(
+        $successfully = $this->database->update(
             $this->database->getTableName(), 
             [ 'id' => $task['id'] ],
             $newProperties
         );
+
+        return [
+            'success' => $successfully,
+            'message' => $successfully ? 'Task updated successfully' : 'Task update failed'
+        ];
     }
 
 }

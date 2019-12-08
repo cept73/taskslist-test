@@ -153,6 +153,9 @@
     <script src="public/assets/lib/datatables/jquery.dataTables.min.js"></script>
     <script src="public/assets/lib/datatables/dataTables.bootstrap4.min.js"></script>
 
+    <!-- JQuery Form -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+
     <!-- Page level custom scripts -->
     @yield('js')
 

@@ -18,20 +18,20 @@
     return [
         'GET' => [
             // Mainpage
-            ''              => ['view' => 'homepage'],
+            ''               => ['view' => 'homepage'],
             // User login/logout
-            'login'         => ['required_perm' => 'notauth', 'view' => 'login'],
-            'logout'        => ['required_perm' => 'auth', 'action' => 'logout'],
+            '/login'         => ['required_perm' => 'notauth', 'view' => 'login'],
+            '/logout'        => ['required_perm' => 'auth', 'action' => 'logout'],
             // Admin's edit
-            'edit'          => ['required_perm' => 'admin', 'view' => 'edit'],
+            '/edit'          => ['required_perm' => 'admin', 'view' => 'edit'],
             // Json requests
-            'tasks'         => ['action' => 'getTasks'],
+            '/tasks'         => ['action' => 'getTasks'],
         ],
 
         'POST' => [
             // User login, json
-            'login'         => ['required_perm' => 'notauth',  'action' => 'login'],
+            '/login'         => ['required_perm' => 'notauth',  'action' => 'login'],
             // Add task
-            'task'          => ['action' => 'addTask'],
+            '/task'          => ['action' => 'addTask'],
         ]
     ];

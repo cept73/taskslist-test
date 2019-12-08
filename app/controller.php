@@ -116,24 +116,17 @@ class Controller extends BaseController {
     {
         if (!empty($request['id'])) {
             if (!$this->user->isAdmin())
-                return $this->redirect('login', '?path=');
-
-            $success = $this->getTasksModel()->updateTask($request);
+                $result = [
+                    'success' => 'error',
+                    'message' => 'Unauthorized'
+                ];
+            else
+                $result = $this->getTasksModel()->updateTask($request);
         }
         else
-            $success = $this->getTasksModel()->addTask($request);
+            $result = $this->getTasksModel()->addTask($request);
 
-        if (!$success)
-            $passedData = array_merge($request, [
-                'addFormError' => 'Validation failed'
-                ]);
-        else
-            // Do not pass old request 
-            $passedData = [
-                'addFormSuccess' => 'Task added successfully'
-                ];
-
-        return $this->view('homepage', $passedData);
+        return $this->jsonOutput($result);
     }
 
 }

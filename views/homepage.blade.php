@@ -72,12 +72,10 @@ function onInitpage(table)
             <h6 class="m-0 font-weight-bold text-primary" id="addTask__WindowCaption">Add task</h6>
         </div>
         <div class="card-body">
-            @if (isset($addFormError)) <div class="alert alert-danger text-center" role="alert">
-                {{ $addFormError }}</div> @endif
-            @if (isset($addFormSuccess)) <div class="alert alert-success text-center" role="alert">
-                {{ $addFormSuccess }}</div> @endif
+            <div id="alert-error" class="alert alert-danger text-center d-none" role="alert"></div>
+            <div id="alert-success" class="alert alert-success text-center d-none" role="alert"></div>
 
-            <form id="add-task" action="/" method="POST">
+            <form id="add-task" action="/task" method="POST">
                 <input type="hidden" name="path" value="task">
                 <input type="hidden" name="id" value="">
 
