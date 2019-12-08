@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Task List &ndash; @yield('title')</title>
+    <title>{{ $site_name ?? 'Site name' }} &ndash; @yield('title')</title>
 
     <!-- Base -->
     <base href="{{ $site_url ?? '/' }}" />
