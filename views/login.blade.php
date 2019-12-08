@@ -1,5 +1,3 @@
-<!-- Login form -->
-
 @extends('layouts.app-clean')
 
 @section('title', 'Login')
