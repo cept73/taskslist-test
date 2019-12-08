@@ -41,6 +41,7 @@ function addTaskFormSetValues(el)
 }
 
 var tableSelectBackup = [];
+var tdsInRow = [];
 function tableSelect(row)
 {
     if (row == null) {
@@ -68,17 +69,22 @@ function tableSelect(row)
         $("#formTaskComplete").val()
     ];
 
-    let tdsInRow = $("td", row);
+    // Get cols
+    tdsInRow = $("td", row);
+    let el = tdsInRow[4];
+    
+    // Safe cast
+    tdsInRow.each(function(k,v) {
+        tdsInRow[k] = (v && v.innerHTML) ? v.innerHTML : '';
+    });
     addTaskFormSetValues([
-        tdsInRow[0].innerHTML,
-        tdsInRow[1].innerHTML,
-        tdsInRow[2].innerHTML,
-        tdsInRow[3].innerHTML,
-        $('input', tdsInRow[4]).attr('checked') == 'checked',
+        tdsInRow[0], tdsInRow[1], tdsInRow[2], tdsInRow[3],
+        $('input', el).attr('checked') == 'checked',
         { 'background': 'cadetblue', 'color': 'white' },
         'Update task',
         'Update'
     ]);
+
     return true;
 }
 
