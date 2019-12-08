@@ -135,7 +135,7 @@ abstract class BaseController
      */
     function viewNotFound()
     {
-        return $this->view('404');
+        return $this->view('error');
     }
 
 
