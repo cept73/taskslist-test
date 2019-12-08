@@ -95,9 +95,9 @@ abstract class BaseController
      * @param string $mask
      * @return bool
      */
-    function isPathMatch($requestPath, $mask)
+    function isPathMatch($requestUrl, $mask)
     {
-        return ($requestPath['path'] ?? '') == $mask;
+        return ($requestUrl ?? '') == $mask;
     }
 
 
@@ -184,5 +184,5 @@ abstract class BaseController
     /**
      * Might be specified in child class
      */
-    abstract public function resolve($request, $routes);
+    abstract public function resolve($url, $request, $routes);
 }

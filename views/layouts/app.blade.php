@@ -81,7 +81,7 @@
                   <img class="img-profile rounded-circle" src="{{ $user['avatar'] ?? '/public/assets/img/avatar.jpg' }}">
                 </div>
               @else
-                <a class="btn btn-primary text-white" href="/?path=login">Login</a>
+                <a class="btn btn-primary text-white" href="/login">Login</a>
               @endif
             </li>
 

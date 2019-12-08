@@ -10,4 +10,5 @@
     // Init new application and resolve request
     $siteConfig = require('config/global.php');
     $siteRoutes = require('config/routes.php');
-    (new \App\Controller($siteConfig))->resolve($_REQUEST, $siteRoutes);
+    $url = $_SERVER['REDIRECT_URL'];
+    (new \App\Controller($siteConfig))->resolve($url, $_REQUEST, $siteRoutes);

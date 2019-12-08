@@ -12,7 +12,7 @@ class Controller extends BaseController {
     /**
      * Resolve request
      */
-    public function resolve($request, $routes)
+    public function resolve($url, $request, $routes)
     {
         // Add global info to all templates
         $this->globalViewParams = [
@@ -28,8 +28,9 @@ class Controller extends BaseController {
 
         // Seek route
         foreach ($routes[$method] as $route => $attributes) {
+
             // Path not match
-            if (! $this->isPathMatch($request, $route) ) continue;
+            if (! $this->isPathMatch($url, $route) ) continue;
 
             // User is not permitted
             if (! $this->isUserMatch($attributes['required_perm'] ?? null) )
@@ -46,7 +47,7 @@ class Controller extends BaseController {
                 if (method_exists( $this, $actionMethodName )) {
                     return $this->$actionMethodName($request);
                 }
-                return $this->actionNotFound($request);
+                return $this->actionNotFound($url);
 
             }
 

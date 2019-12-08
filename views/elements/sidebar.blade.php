@@ -24,14 +24,14 @@
     <!-- Nav Item - Pages Collapse Menu -->
     @if (isset($user) and $user['logged'])
     <li class="nav-item @if (isset($route) and $route['view'] == 'logout') active @endif">
-      <a class="nav-link" href="/?path=logout">
+      <a class="nav-link" href="/logout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Logout</span>
       </a>
     </li>
     @else
     <li class="nav-item @if (isset($route) and $route['view'] == 'login') active @endif">
-      <a class="nav-link" href="/?path=login">
+      <a class="nav-link" href="/login">
         <i class="fas fa-sign-in-alt"></i>
         <span>Login</span>
       </a>
