@@ -10,7 +10,10 @@
 function onInitpage(table)
 {
     $('tr', table).on('click', function() {
-        
+
+	// First line - skip
+        if ($(this).prev().length == 0) return false;
+
         if ($(this).hasClass('selected')) {
             // Remove selected
             $(this).removeClass('selected');
