@@ -104,6 +104,22 @@ function showAlert(type)
 }
 
 
+function showMessage(type, text)
+{
+    if (type != 'error' && type != 'success') return false;
+    $("#alert-" + type).html(text);
+    showAlert(type);
+    return true;
+}
+
+
+function clearFormFields()
+{
+    $("#formTaskName, #formTaskText, #formTaskEmail").val('');
+    $("#formTaskCompleted").prop('checked','')
+}
+
+
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
 
@@ -138,16 +154,17 @@ $(document).ready(function() {
             var data = $.parseJSON(responseText);
             if (data.success) {
                 // Show message
-                $("#alert-success").html(data.message);
-                showAlert('success');
+                showMessage('success', data.message);
+
+                // Clear fields
+                clearFormFields();
 
                 // Refresh table
                 tasksList.ajax.reload()
             }
             else {
                 // Show message
-                $("#alert-error").html(data.message);
-                showAlert('error');
+                showMessage('error', data.message);
             }
         }
     });
