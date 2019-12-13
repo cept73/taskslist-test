@@ -13,4 +13,4 @@
     $siteConfig = require('config/global.php');
     $siteRoutes = require('config/routes.php');
     $url = $_SERVER['REDIRECT_URL'] ?? '';
-    (new \Todo\Controller($siteConfig))->resolve($url, $_REQUEST, $siteRoutes);
+    (new Controller($siteConfig))->resolve($url, $_REQUEST, $siteRoutes);
