@@ -6,7 +6,7 @@
     // Return open config
     return [
         'site_name'     => 'TaskMan',       // <-- Site name
-        'version'       => '1.0a',          // Version
+        'version'       => '1.0',           // Version
         'site_url'      => '/',             // <-- Web-site base url
         'lang'          => 'en',            // 
         'copyright'     => 'by Cept',       // Footer copyright
