@@ -5,6 +5,7 @@
     require __DIR__ . '/vendor/autoload.php';
 
     // Plug MVC
+    // models autoloaded with PSR-4
     require 'app/view.php';
     require 'app/controller.php';
 
