@@ -39,14 +39,19 @@ class DB
         return $this->connection; 
     }
 
-    public function execute($sql)
+    private function operation($method, ...$data)
     {
         try {
-            return @$this->connection->execute($sql);
+            return @$this->connection->$method(...$data);
         }
         catch (\Exception $ex) {
             return $this->onError($ex);
         }
+    }
+
+    public function execute($sql)
+    {
+        return $this->operation('execute', $sql);
     }
 
     public function getTableName()
@@ -56,62 +61,32 @@ class DB
 
     public function fetchColumn($sql, $data=[])
     {
-        try {
-            return @$this->connection->fetchColumn($sql, $data);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('fetchColumn', $sql, $data);
     }
 
     public function fetchRow($sql, $data=[])
     {
-        try {
-            return @$this->connection->fetchRow($sql, $data);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('fetchRow', $sql, $data);
     }
 
     public function fetchRowMany($sql, $data=[])
     {
-        try {
-            return @$this->connection->fetchRowMany($sql, $data);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('fetchRowMany', $sql, $data);
     }
 
     public function insert($tableName, $data)
     {
-        try {    
-            return @$this->connection->insert($tableName, $data);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('insert', $tableName, $data);
     }
 
     public function update($tableName, $conds, $data)
     {
-        try {
-            return @$this->connection->update($tableName, $conds, $data);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('update', $tableName, $conds, $data);
     }
 
     public function delete($tableName, $conds)
     {
-        try {
-            return @$this->connection->delete($tableName, $conds);
-        }
-        catch (\Exception $ex) {
-            return $this->onError($ex);
-        }
+        return $this->operation('delete', $tableName, $conds);
     }
 
 }
