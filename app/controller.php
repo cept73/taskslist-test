@@ -1,6 +1,7 @@
 <?php
 
 namespace Todo;
+
 use Todo\Model;
 
 // Base class
