@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Todo;
 
 abstract class BaseController
 {
@@ -20,7 +20,7 @@ abstract class BaseController
     {
         $this->config = $config;
 
-        $this->database = new \App\Model\DB([
+        $this->database = new Model\DB([
             'db_host' => getenv('DB_HOST'),
             'db_user' => getenv('DB_USER'),
             'db_pass' => getenv('DB_PASS'),
@@ -46,7 +46,7 @@ abstract class BaseController
         if (!empty($this->config))
             $params = array_merge($this->config, $params);
 
-        return \App\View($viewName, $params);
+        return View($viewName, $params);
     }
 
 
@@ -177,7 +177,7 @@ abstract class BaseController
 
     public function getCurrentUser()
     {
-        return new \App\Model\User();
+        return new Model\User();
     }
 
 

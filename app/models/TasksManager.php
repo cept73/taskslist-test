@@ -1,12 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace Todo\Model;
 
-// Base class
-require_once('app/models/model.base.php');
-
-// Custom model
-class TasksManager extends BaseModel {
+class TasksManager {
 
     protected $database;      // Database where tasks
     protected $user;          // Current user
@@ -16,11 +12,11 @@ class TasksManager extends BaseModel {
     /**
      * Init
      * 
-     * @param $database \App\Model\DB
-     * @param $user \App\Model\User
+     * @param $database DB
+     * @param $user User
      * @return void
      */
-    function __construct(\App\Model\DB $database, User $user)
+    function __construct(DB $database, User $user)
     {
         $this->database = $database;
         $this->user = $user;

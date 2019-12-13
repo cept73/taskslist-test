@@ -1,7 +1,7 @@
 <?php
 
-namespace App;
-use App\Model;
+namespace Todo;
+use Todo\Model;
 
 // Base class
 require_once('app/controller.base.php');
@@ -68,7 +68,7 @@ class Controller extends BaseController {
      */
     function getTasksModel()
     {
-        return new \App\Model\TasksManager(
+        return new Model\TasksManager(
             $this->database, // Get data from database
             $this->user      // Current user, who want to work with it
         );

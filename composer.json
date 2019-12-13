@@ -3,5 +3,10 @@
         "vlucas/phpdotenv": "^4.0",
         "simplon/mysql": "^2.2",
         "jenssegers/blade": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Todo\\": "app/models/"
+        }
     }
 }
