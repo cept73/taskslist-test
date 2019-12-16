@@ -1,21 +1,34 @@
 # beejee-test
 
 
-USED:
---------------------------------------------------------------------
+About:
+---------------------------
 
-THEME: https://startbootstrap.com/themes/sb-admin-2/
+Simple Tasks list site on pure PHP.
+For authorization: admin 123 (admin may edit old tasks and set completed flag)
+Unauthorized users may add tasks too
+In list we might see automatic flag "edited by admin" too.
 
-LIBRARIES:
-    * vlucas/dotenv
-    * simplon/mysql
-    * jessengers/blade
+Requirements:
+---------------------------
 
+* PHP 7
+* MySQL
+* Composer
+* jQuery
+* Theme: https://startbootstrap.com/themes/sb-admin-2/
+
+Libraries:
+---------------------------
+
+* vlucas/dotenv
+* simplon/mysql
+* jessengers/blade
 
 INSTALLATION
 ----------------------------
 
-1) Create in database table with any name, for example 'tasks_list'
+1️⃣ Create table in database with any name, for example 'tasks_list'
 ```
     CREATE TABLE `tasks_list` (
         `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
@@ -29,7 +42,7 @@ INSTALLATION
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
 
-2) Create .env file in the root directory, with secret content:
+2️⃣ Create .env file in the root directory with secret content:
 ```
 DB_HOST=localhost
 DB_USER=root
@@ -38,9 +51,9 @@ DB_NAME=test
 DB_TABLE=tasks_list
 ```
 
-3) Check config/ files, tune if needed
+3️⃣ Check config/ files, tune if needed
 
-4) Set write permissions for web-server to cache folder
+4️⃣ Set write permissions for web-server to cache folder
 For simplicity you may use:
 ```
 chmod 777 cache
