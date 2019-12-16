@@ -1,4 +1,4 @@
-# beejee-test
+# taskslist-test
 
 
 About:
@@ -30,16 +30,16 @@ INSTALLATION
 
 1️⃣ Create table in database with any name, for example 'tasks_list'
 ```
-    CREATE TABLE `tasks_list` (
-        `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
-        `task` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-        `text` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-        `email` VARCHAR(100) NOT NULL,
-        `completed` BOOL default false,
-        `admin_edit` BOOL default false,
-        PRIMARY KEY (`id`),
-        CONSTRAINT `tasks_list_UN` UNIQUE KEY (`task`,`text`,`email`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+CREATE TABLE `tasks_list` (
+    `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
+    `task` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `text` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `email` VARCHAR(100) NOT NULL,
+    `completed` BOOL default false,
+    `admin_edit` BOOL default false,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `tasks_list_UN` UNIQUE KEY (`task`,`text`,`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
 
 2️⃣ Create .env file in the root directory with secret content:
