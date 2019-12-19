@@ -39,10 +39,10 @@ class DB
         return $this->connection; 
     }
 
-    private function operation($method, ...$data)
+    private function operation($method, ...$params)
     {
         try {
-            return @$this->connection->$method(...$data);
+            return @$this->connection->$method(...$params);
         }
         catch (\Exception $ex) {
             return $this->onError($ex);
@@ -59,34 +59,34 @@ class DB
         return $this->tableName;
     }
 
-    public function fetchColumn($sql, $data=[])
+    public function fetchColumn($sql, $reqParams=[])
     {
-        return $this->operation('fetchColumn', $sql, $data);
+        return $this->operation('fetchColumn', $sql, $reqParams);
     }
 
-    public function fetchRow($sql, $data=[])
+    public function fetchRow($sql, $reqParams=[])
     {
-        return $this->operation('fetchRow', $sql, $data);
+        return $this->operation('fetchRow', $sql, $reqParams);
     }
 
-    public function fetchRowMany($sql, $data=[])
+    public function fetchRowMany($sql, $reqParams=[])
     {
-        return $this->operation('fetchRowMany', $sql, $data);
+        return $this->operation('fetchRowMany', $sql, $reqParams);
     }
 
-    public function insert($tableName, $data)
+    public function insert($tableName, $reqParams)
     {
-        return $this->operation('insert', $tableName, $data);
+        return $this->operation('insert', $tableName, $reqParams);
     }
 
-    public function update($tableName, $conds, $data)
+    public function update($tableName, $conds, $reqParams)
     {
-        return $this->operation('update', $tableName, $conds, $data);
+        return $this->operation('update', $tableName, $conds, $reqParams);
     }
 
-    public function delete($tableName, $conds)
+    public function delete($tableName, $conditions)
     {
-        return $this->operation('delete', $tableName, $conds);
+        return $this->operation('delete', $tableName, $conditions);
     }
 
 }
