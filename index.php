@@ -4,10 +4,7 @@
 use app\controller\Controller;
 
 require __DIR__ . '/vendor/autoload.php';
-spl_autoload_register(static function ($className) {
-    $className = str_replace('\\', '/', $className);
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/$className.php");
-});
+require __DIR__ . '/autoload.php';
 
 // Init new application and resolve request
 $siteConfig = require('config/global.php');
