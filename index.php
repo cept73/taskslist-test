@@ -1,16 +1,18 @@
 <?php
-    namespace Todo;
+/** @noinspection PhpUnhandledExceptionInspection */
 
-    // Plug autoload libraries
-    require __DIR__ . '/vendor/autoload.php';
+use app\controller\Controller;
 
-    // Plug MVC
-    // models autoloaded with PSR-4
-    require 'app/view.php';
-    require 'app/controller.php';
+require __DIR__ . '/vendor/autoload.php';
+spl_autoload_register(static function ($className) {
+    $className = str_replace('\\', '/', $className);
+    require_once($_SERVER['DOCUMENT_ROOT'] . "/$className.php");
+});
 
-    // Init new application and resolve request
-    $siteConfig = require('config/global.php');
-    $siteRoutes = require('config/routes.php');
-    $url = $_SERVER['REDIRECT_URL'] ?? '';
-    (new Controller($siteConfig))->resolve($url, $_REQUEST, $siteRoutes);
+// Init new application and resolve request
+$siteConfig = require('config/global.php');
+$siteRoutes = require('config/routes.php');
+$url = $_SERVER['REDIRECT_URL'] ?? '';
+
+$controller = new Controller($siteConfig);
+$controller->resolve($url, $_REQUEST, $siteRoutes);

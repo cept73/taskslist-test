@@ -33,27 +33,12 @@
                     </div>
                 </div>
                 <input type="submit" value="Login" class="btn btn-primary btn-user btn-block">
-
-<!-- IN PAYED VERSION:
-                <hr>
-            <a href="#" class="btn btn-google btn-user btn-block">
-                <i class="fab fa-google fa-fw"></i> Login with Google
-            </a>
-            <a href="#" class="btn btn-facebook btn-user btn-block">
-                <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-            </a>-->
             </form>
-<!-- IN PAYED VERSION:
+
             <hr>
+
             <div class="text-center">
-            <a class="small" href="forgot-password.html">Forgot Password?</a>
-            </div>
-            <div class="text-center">
-            <a class="small" href="register.html">Create an Account!</a>
-            </div>-->
-            <hr>
-            <div class="text-center">
-                <a class="small" href="/">Return to mainpage</a>
+                <a class="small" href="/">Return to main page</a>
             </div>
         </div>
         </div>

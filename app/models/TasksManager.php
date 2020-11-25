@@ -1,40 +1,45 @@
 <?php
 
-namespace Todo\Model;
+namespace app\models;
 
-class TasksManager {
-
+class TasksManager
+{
     protected $database;      // Database where tasks
     protected $user;          // Current user
-    private $table;           // Table
 
+    // Overall checklist to validation
+    const VALIDATION_DATA           = 1;
+    const VALIDATION_SPECIFIED_ID   = 2;
+    const VALIDATION_IS_ADMIN       = 3;
+
+    const VALIDATION_CHECKLIST = [
+        'addTask'       => [self::VALIDATION_DATA],
+        'updateTask'    => [self::VALIDATION_DATA, self::VALIDATION_SPECIFIED_ID, self::VALIDATION_IS_ADMIN]
+    ];
 
     /**
      * Init
      * 
-     * @param $database DB
-     * @param $user User
+     * @param DB $database
+     * @param User $user
      * @return void
      */
-    function __construct(DB $database, User $user)
+    public function __construct(DB $database, User $user)
     {
         $this->database = $database;
         $this->user = $user;
     }
-
 
     /**
      * Get tasks list
      * 
      * @return array List or empty array
      */
-    function getList()
+    public function getList(): array
     {
-        return $this->database->fetchRowMany(
-            'SELECT * FROM ' . $this->database->getTableName()
-        ) ?? [];
+        $tableName = $this->database->getTableName();
+        return $this->database->fetchRowMany("SELECT * FROM $tableName") ?? [];
     }
-
 
     /**
      * Validate form
@@ -42,11 +47,11 @@ class TasksManager {
      * @param array Fields values
      * @return bool Correct or not
      */
-    function validateNewTask($task)
+    public function validateNewTask($task): bool
     {
         $rulesCheck = [
-            'taskName' => ['minlength' => 5],
-            'taskText' => ['minlength' => 5, 'maxlength' => 250],
+            'taskName'  => ['minlength' => 5],
+            'taskText'  => ['minlength' => 5, 'maxlength' => 250],
             'taskEmail' => ['type' => 'email'] 
         ];
 
@@ -54,62 +59,57 @@ class TasksManager {
             $specifiedField = $task[$field];
 
             // Check minlength
-            if ($minlength = $rule['minlength'] ?? false) {
-                if (strlen($specifiedField) < $minlength) return false;
+            if (($minlength = $rule['minlength'] ?? false) && strlen($specifiedField) < $minlength) {
+                return false;
             }
 
             // Check maxlength
-            if ($maxlength = $rule['maxlength'] ?? false) {
-                if (strlen($specifiedField) > $maxlength) return false;
+            if (($maxlength = $rule['maxlength'] ?? false) && strlen($specifiedField) > $maxlength) {
+                return false;
             }
 
             // Check type
             $fieldType = $rule['type'] ?? 'text';
-            if ($fieldType == 'email') {
-                if (!filter_var($specifiedField, FILTER_VALIDATE_EMAIL))
-                    return false;
+            if (($fieldType === 'email') && !filter_var($specifiedField, FILTER_VALIDATE_EMAIL)) {
+                return false;
             }
         }
 
         return true;
     }
 
-    function validateRequest($operation, $task)
+    /**
+     * @param $operation
+     * @param $task
+     * @return array
+     */
+    public function validateRequest($operation, $task): array
     {
-        // Overall checklist to validation
-        $checksOverallList = [
-            'addTask' => [1],
-            'updateTask' => [1,2,3]
-        ];
-
         // Get checklist for operation
-        $checks = $checksOverallList[$operation] ?? [];
+        $checks = self::VALIDATION_CHECKLIST[$operation] ?? [];
 
         // #1 Validate data first
-        if (in_array(1, $checks)) {
-            if (!$this->validateNewTask($task))
-                return [
-                    'success' => false,
-                    'message' => 'Validation failed' 
-                ];
+        if (in_array(self::VALIDATION_DATA, $checks, true) && !$this->validateNewTask($task)) {
+            return [
+                'success' => false,
+                'message' => 'Validation failed'
+            ];
         }
 
         // #2 ID might be specified in some cases
-        if (in_array(2, $checks)) {
-            if (empty($task['id']))
-                return [
-                    'success' => false,
-                    'message' => 'ID is not specified'
-                ];
+        if (empty($task['id']) && in_array(self::VALIDATION_SPECIFIED_ID, $checks, true)) {
+            return [
+                'success' => false,
+                'message' => 'ID is not specified'
+            ];
         }
 
         // #3 Edit only for admins
-        if (in_array(3, $checks)) {
-            if (!$this->user->isAdmin())
-                return [
-                    'success' => false,
-                    'message' => 'Admin rights required'
-                ];
+        if (in_array(self::VALIDATION_IS_ADMIN, $checks, true) && !$this->user->isAdmin()) {
+            return [
+                'success' => false,
+                'message' => 'Admin rights required'
+            ];
         }
 
         // Else - validation complete successfully
@@ -120,15 +120,16 @@ class TasksManager {
 
     /**
      * Add task
-     * 
+     *
      * @param array Task properties
-     * @return bool All right or not
+     * @return array Request result
      */
-    function addTask($task)
+    public function addTask($task): array
     {
-        $validation = $this->validateRequest('addTask', $task);
-        if ($validation['success'] == false)
-            return $validation;
+        $validationResult = $this->validateRequest('addTask', $task);
+        if ($validationResult['success'] === false) {
+            return $validationResult;
+        }
 
         // Task properties
         $newProperties = [
@@ -136,54 +137,56 @@ class TasksManager {
             'text'  => $task['taskText'],
             'email' => $task['taskEmail']
         ];
-        // Additional field(s) for admininstrator
-        if ($this->user->isAdmin()) {
-            if ($task['taskCompleted'])
-                $newProperties['completed'] = $this->isChecked($task, 'taskCompleted');
+
+        // Additional field(s) for admin
+        if ($task['taskCompleted'] && $this->user->isAdmin()) {
+            $newProperties['completed'] = $this->isChecked($task, 'taskCompleted');
         }
 
-        $successfully = $this->database->insert(
+        $successfulRequest = $this->database->insert(
             $this->database->getTableName(),
             $newProperties
         );
 
         return [
-            'success' => $successfully,
-            'message' => $successfully ? 'Task added successfully' : 'Task add failed'
+            'success' => $successfulRequest,
+            'message' => $successfulRequest ? 'Task added successfully' : 'Task add failed'
         ];
     }
 
-    function isChecked($array, $flag)
+    public function isChecked($array, $flag): bool
     {
-        if ($array[$flag] ?? false == 'on') return true;
-        if ($array[$flag] ?? false == 1) return true;
-        return false;
+        $arrayFlag = $array[$flag] ?? false;
+        return $arrayFlag === 'on' || $arrayFlag === 1;
     }
 
     /**
      * Update task
      * 
      * @param array Task properties
-     * @return bool All right or not
+     * @return array
      */
-    function updateTask($task)
+    public function updateTask($task): array
     {
         $validation = $this->validateRequest('updateTask', $task);
-        if ($validation['success'] == false)
+        if ($validation['success'] === false) {
             return $validation;
+        }
 
         // Task properties
         $newProperties = [
-            'task'  => $task['taskName'],
-            'text'  => $task['taskText'],
-            'email' => $task['taskEmail'],
-            'completed'  => $this->isChecked($task, 'taskCompleted'),
-            'admin_edit' => 1
+            'task'          => $task['taskName'],
+            'text'          => $task['taskText'],
+            'email'         => $task['taskEmail'],
+            'completed'     => $this->isChecked($task, 'taskCompleted'),
+            'admin_edit'    => 1
         ];
 
         $successfully = $this->database->update(
             $this->database->getTableName(), 
-            [ 'id' => $task['id'] ],
+            [
+                'id' => $task['id']
+            ],
             $newProperties
         );
 
@@ -192,5 +195,4 @@ class TasksManager {
             'message' => $successfully ? 'Task updated successfully' : 'Task update failed'
         ];
     }
-
 }

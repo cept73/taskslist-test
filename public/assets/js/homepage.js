@@ -1,51 +1,59 @@
 
-/* Selected row in the table */
-var selectedTask = null;
-// Table
-var tasksList = null;
+let selectedTask        = null;
+let tasksList           = null;
+let tableSelectBackup   = [];
+let tdsInRow            = [];
 
 
 /* Render of checkboxes */
-function renderCheckbox(data, type, row, column) {
+function renderCheckbox(data, type, row, column)
+{
     if (type === 'display') {
-        let checkFlag = (row[column] == 1) ? ' checked' : '';
+        let checkFlag = (row[column] === 1) ? ' checked' : '';
         return '<input type="checkbox" onclick="return false;" ' + checkFlag + '>';
     }
 
-    if (type === 'sort') return row[column];
+    if (type === 'sort') {
+        return row[column];
+    }
 
     return data;
 }
-    function renderCompletedCheckbox(data, type, row) {
-        return renderCheckbox(data, type, row, 'completed')
-    }
-    function renderAdmineditCheckbox(data, type, row) {
-        return renderCheckbox(data, type, row, 'admin_edit')
-    }
 
+function renderCompletedCheckbox(data, type, row)
+{
+    return renderCheckbox(data, type, row, 'completed');
+}
+
+function renderAdminEditCheckbox(data, type, row)
+{
+    return renderCheckbox(data, type, row, 'admin_edit');
+}
 
 function addTaskFormSetValues(el)
 {
     $("#addTask input[name=id]").val(el[0]);
-    $("#formTaskName").val(el[1])
-    $("#formTaskText").val(el[2])
-    $("#formTaskEmail").val(el[3])
-    $("#formTaskCompleted").attr('checked', el[4])
+    $("#formTaskName").val(el[1]);
+    $("#formTaskText").val(el[2]);
+    $("#formTaskEmail").val(el[3]);
+    $("#formTaskCompleted").attr('checked', el[4]);
     $("#addTask, #addTask div.card-header, #addTask__WindowCaption").css(el[5]);
-    if (el[5].color == 'white')
-        $("#addTask__WindowCaption").removeClass("text-primary");
-    else
-        $("#addTask__WindowCaption").addClass("text-primary");
-    $("#addTask__WindowCaption").html(el[6]);
+    let addTaskWindowCaption = $("#addTask__WindowCaption");
+    if (el[5].color === 'white') {
+        addTaskWindowCaption.removeClass("text-primary");
+    } else {
+        addTaskWindowCaption.addClass("text-primary");
+    }
+    addTaskWindowCaption.html(el[6]);
     $("#addTask__Submit").val(el[7]);
 }
 
-var tableSelectBackup = [];
-var tdsInRow = [];
 function tableSelect(row)
 {
-    if (row == null) {
-        if (tableSelectBackup.length != 5) return false;
+    if (row === null) {
+        if (tableSelectBackup.length !== 5) {
+            return false;
+        }
 
         addTaskFormSetValues([
             '',
@@ -53,7 +61,10 @@ function tableSelect(row)
             tableSelectBackup[2],
             tableSelectBackup[3],
             tableSelectBackup[4],
-            { 'background': '', 'color': '' },
+            {
+                'background': '',
+                'color': ''
+            },
             'Add task',
             'Add task'
         ]);
@@ -75,12 +86,18 @@ function tableSelect(row)
     
     // Safe cast
     tdsInRow.each(function(k,v) {
-        tdsInRow[k] = (v && v.innerHTML) ? v.innerHTML : '';
+        tdsInRow[k] = v && v.innerHTML ? v.innerHTML : '';
     });
     addTaskFormSetValues([
-        tdsInRow[0], tdsInRow[1], tdsInRow[2], tdsInRow[3],
-        $('input', el).attr('checked') == 'checked',
-        { 'background': 'cadetblue', 'color': 'white' },
+        tdsInRow[0],
+        tdsInRow[1],
+        tdsInRow[2],
+        tdsInRow[3],
+        $('input', el).attr('checked') === 'checked',
+        {
+            'background': 'cadetblue',
+            'color': 'white'
+        },
         'Update task',
         'Update'
     ]);
@@ -88,30 +105,30 @@ function tableSelect(row)
     return true;
 }
 
-
 function hideAlert()
 {
     $('div.alert').addClass('d-none');
 }
 
-
 function showAlert(type)
 {
     hideAlert();
 
-    if (type == 'error' || type == 'success')
+    if (type === 'error' || type === 'success') {
         $("#alert-" + type).removeClass('d-none');
+    }
 }
-
 
 function showMessage(type, text)
 {
-    if (type != 'error' && type != 'success') return false;
+    if (type !== 'error' && type !== 'success') {
+        return false;
+    }
+
     $("#alert-" + type).html(text);
     showAlert(type);
     return true;
 }
-
 
 function clearFormFields()
 {
@@ -119,16 +136,15 @@ function clearFormFields()
     $("#formTaskCompleted").prop('checked','')
 }
 
-
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
-
-
     // DataTable init
-    var table = $('#tasks_list');
-    table.on('draw.dt', function() {
-        onInitpage(table);
+    let table = $('#tasks_list');
+
+    table.on('draw.dt', function () {
+        onInitPage(table);
     });
+
     tasksList = table.DataTable({
         columns: [
             { data: 'id' },
@@ -136,22 +152,22 @@ $(document).ready(function() {
             { data: 'text' },
             { data: 'email' },
             { data: 'completed', render: renderCompletedCheckbox },
-            { data: 'admin_edit', render: renderAdmineditCheckbox }
+            { data: 'admin_edit', render: renderAdminEditCheckbox }
         ],
         ajax: {
             url: '/tasks',
             dataSrc: 'table',
         },
-        lengthMenu: [ 3, 5, 10 ],
+        lengthMenu: [3, 5, 10],
     });
 
 
     // Validate fields in the form
-    var formAdd = $('form#add-task');
+    let formAdd = $('form#add-task');
     formAdd.validate();
     formAdd.ajaxForm({
-        success: function(responseText, _, _, _) {
-            var data = $.parseJSON(responseText);
+        success: function(responseText) {
+            let data = $.parseJSON(responseText);
             if (data.success) {
                 // Show message
                 showMessage('success', data.message);
@@ -161,8 +177,7 @@ $(document).ready(function() {
 
                 // Refresh table
                 tasksList.ajax.reload()
-            }
-            else {
+            } else {
                 // Show message
                 showMessage('error', data.message);
             }
@@ -189,6 +204,4 @@ $(document).ready(function() {
             email: true
         }
     });
-
-
 });

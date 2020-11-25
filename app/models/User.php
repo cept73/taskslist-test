@@ -1,45 +1,43 @@
 <?php
 
-namespace Todo\Model;
+namespace app\models;
 
 class User 
 {
-    protected $logged = null;
+    private $isLogged;
     protected $info = [];
 
     public function __construct()
     {
         session_start();
-        $this->logged = isset($_SESSION['user']);
-        $this->info = $_SESSION['user'] ?? [];
+
+        $this->isLogged = isset($_SESSION['user']);
+        $this->info     = $_SESSION['user'] ?? [];
     }
 
-    public function login($login, $password)
+    public function login($login, $password): bool
     {
         // Skip spaces
         $login = trim($login);
 
         // Check
-        if (!$this->checkCredentials($login, $password)) return false;
+        if (!$this->checkCredentials($login, $password)) {
+            return false;
+        }
 
         // FREE VERSION LIMITATION: login only for admin
         $this->info = $_SESSION['user'] = [
             'login' => $login,
             'isAdmin' => true
         ];
+
         return true;
     }
 
-    public function getInfo()
+    public function getInfo(): array
     {
         // Get all properties
-        return array_merge(['logged' => $this->logged], $this->info);
-    }
-
-    public function getProp($prop)
-    {
-        // Something
-        return $this->info[$prop] ?? null;
+        return array_merge(['logged' => $this->isLogged], $this->info);
     }
 
     public function logout()
@@ -49,27 +47,25 @@ class User
         $this->info = [];
     }
 
-    public function checkCredentials($login, $password)
+    public function checkCredentials($login, $password): bool
     {
         // FREE VERSION LIMITATION: only one login, password
-        if ($login == 'admin' && $password == '123')
-            return true;
-
-        return false;
+        return $login === 'admin' && $password === '123';
     }
 
-    public function isLogged()
+    public function isLogged(): bool
     {
-        return $this->logged == true;
+        return $this->isLogged;
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         // Not logged => not admin
-        if (!$this->isLogged()) return false;
+        if (!$this->isLogged()) {
+            return false;
+        }
 
         // FREE VERSION LIMITATION: all logged are admins
         return true;
     }
-
 }

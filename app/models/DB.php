@@ -1,41 +1,59 @@
 <?php
 
-namespace Todo\Model;
+namespace app\models;
+
+use Exception;
+use Simplon\Mysql\Mysql;
+use Simplon\Mysql\PDOConnector;
 
 class DB
 {
-    var $connection = null;
-    var $tableName = null;
+    /** @var ?Mysql $connection */
+    public $connection;
 
+    /** @var ?string $tableName */
+    public $tableName;
 
-    function __construct($settings = null)
+    /**
+     * DB constructor.
+     * @param ?array $settings
+     * @throws Exception
+     */
+    public function __construct(array $settings = null)
     {
         // Connect with specified params or from env
         $this->connect($settings);
     }
 
-    public function onError($error)
+    /**
+     * @param $error
+     * @return bool
+     * @noinspection ForgottenDebugOutputInspection
+     */
+    public function onError($error): bool
     {
+        error_log(json_encode($error));
         return false;
+   }
 
-        //die (json_encode($error));
-    }
-
+    /**
+     * @param null $settings
+     * @return Mysql|null
+     * @throws Exception
+     */
     public function connect($settings = null)
     {
         // Already connected
-        if ($this->connection != null)
+        if ($this->connection) {
             return $this->connection;
-
-        $pdo = ( new \Simplon\Mysql\PDOConnector(
-            $settings['db_host'],   // server
-            $settings['db_user'],   // user
-            $settings['db_pass'],   // password
-            $settings['db_name']    // database
-        ) )->connect('utf8', []);
+        }
 
         $this->tableName = $settings['db_table'];
-        $this->connection = new \Simplon\Mysql\Mysql( $pdo );
+
+        $pdo = (new PDOConnector($settings['db_host'], $settings['db_user'], $settings['db_pass'], $settings['db_name']))
+            ->connect('utf8', []);
+        $this->connection = new Mysql($pdo);
+
         return $this->connection; 
     }
 
@@ -43,50 +61,87 @@ class DB
     {
         try {
             return @$this->connection->$method(...$params);
-        }
-        catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return $this->onError($ex);
         }
     }
 
-    public function execute($sql)
+    /**
+     * @param $sql
+     * @return bool
+     */
+    public function execute($sql): bool
     {
         return $this->operation('execute', $sql);
     }
 
+    /**
+     * @return ?string
+     */
     public function getTableName()
     {
         return $this->tableName;
     }
 
-    public function fetchColumn($sql, $reqParams=[])
+    /**
+     * @param string $sql
+     * @param array $reqParams
+     * @return ?string
+     * @noinspection PhpUnused
+     */
+    public function fetchColumn(string $sql, $reqParams = [])
     {
         return $this->operation('fetchColumn', $sql, $reqParams);
     }
 
-    public function fetchRow($sql, $reqParams=[])
+    /**
+     * @param string $sql
+     * @param array $reqParams
+     * @return array|bool|null
+     */
+    public function fetchRow(string $sql, $reqParams = [])
     {
         return $this->operation('fetchRow', $sql, $reqParams);
     }
 
-    public function fetchRowMany($sql, $reqParams=[])
+    /**
+     * @param $sql
+     * @param array $reqParams
+     * @return array|bool|null
+     */
+    public function fetchRowMany($sql, $reqParams = [])
     {
         return $this->operation('fetchRowMany', $sql, $reqParams);
     }
 
-    public function insert($tableName, $reqParams)
+    /**
+     * @param $tableName
+     * @param $reqParams
+     * @return bool
+     */
+    public function insert($tableName, $reqParams): bool
     {
         return $this->operation('insert', $tableName, $reqParams);
     }
 
-    public function update($tableName, $conds, $reqParams)
+    /**
+     * @param $tableName
+     * @param $conditions
+     * @param $reqParams
+     * @return bool
+     */
+    public function update($tableName, $conditions, $reqParams): bool
     {
-        return $this->operation('update', $tableName, $conds, $reqParams);
+        return $this->operation('update', $tableName, $conditions, $reqParams);
     }
 
-    public function delete($tableName, $conditions)
+    /**
+     * @param $tableName
+     * @param $conditions
+     * @return bool
+     */
+    public function delete($tableName, $conditions): bool
     {
         return $this->operation('delete', $tableName, $conditions);
     }
-
 }

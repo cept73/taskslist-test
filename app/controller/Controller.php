@@ -1,23 +1,27 @@
 <?php
 
-namespace Todo;
+namespace app\controller;
 
-use Todo\Model;
+use app\models\TasksManager;
 
-// Base class
-require_once('app/controller.base.php');
-
-// Custom controller
-class Controller extends BaseController {
+class Controller extends BaseController
+{
+    const PAGE_AFTER_AUTH = '';
 
     /**
      * Resolve request
+     * @param $url
+     * @param $request
+     * @param $routes
+     * @return bool|void
      */
     public function resolve($url, $request, $routes)
     {
+        $user = $this->user;
+
         // Add global info to all templates
         $this->globalViewParams = [
-            'user' => $this->user->getInfo(),
+            'user' => $user->getInfo(),
         ];
 
         $method = $_SERVER['REQUEST_METHOD'];
@@ -26,30 +30,29 @@ class Controller extends BaseController {
             return $this->viewDenied();
         }
 
-
         // Seek route
         foreach ($routes[$method] as $route => $attributes) {
-
             // Path not match
-            if (! $this->isPathMatch($url, $route) ) continue;
+            if (!$this->isPathMatch($url, $route)) {
+                continue;
+            }
 
             // User is not permitted
-            if (! $this->isUserMatch($attributes['required_perm'] ?? null) )
+            if (!empty($attributes['required_perm']) && !$this->isUserMatch($attributes['required_perm'])) {
                 return $this->viewDenied();
+            }
 
             // Without view?
             if (!isset($attributes['view'])) {
-
                 // Seek action
-                $actionMethodName = 'action' . (
-                    ucfirst($attributes['action']) ?? 'Default'
-                );
+                $actionSubName      = ucfirst($attributes['action']) ?? 'Default';
+                $actionMethodName   = "action$actionSubName";
 
-                if (method_exists( $this, $actionMethodName )) {
+                if (method_exists($this, $actionMethodName)) {
                     return $this->$actionMethodName($request);
                 }
-                return $this->actionNotFound($url);
 
+                return $this->actionNotFound($url);
             }
 
             // Pass route attributes to template
@@ -63,71 +66,74 @@ class Controller extends BaseController {
         return $this->viewNotFound();
     }
 
-
     /**
      * Get model for working with
      */
-    function getTasksModel()
+    public function getTasksModel(): TasksManager
     {
-        return new Model\TasksManager(
+        return new TasksManager(
             $this->database, // Get data from database
             $this->user      // Current user, who want to work with it
         );
     }
 
-
     /**
      * Actions list - to serve AJAX and other requests
+     * @param $request
      */
-
-    function actionNotFound($request)
+    public function actionNotFound($request)
     {
-        return $this->jsonOutput([
-            'error' => 'Wrong action', 
-            'action' => $request
-            ]);
+        $this->jsonOutput([
+            'error'     => 'Wrong action',
+            'action'    => $request
+        ]);
     }
 
-    function actionLogin($request)
+    public function actionLogin($request): bool
     {
         if (! $this->user->login($request['login'], $request['password']) ) {
             return $this->view('login', [
                 'error' => 'Wrong credentials', 
                 'login' => $request['login']
-                ]);
+            ]);
         }
-        return $this->redirect('');
+
+        $this->redirect(self::PAGE_AFTER_AUTH);
+        return true;
     }
 
-    function actionLogout($request)
+    /** @noinspection PhpUnused */
+    public function actionLogout(): bool
     {
         $this->user->logout();
-        return $this->redirect('');
+        $this->redirect(self::PAGE_AFTER_AUTH);
+        return true;
     }
 
-    function actionGetTasks($request)
+    public function actionGetTasks()
     {
-        return $this->jsonOutput([
-            'table' => $this->getTasksModel()->getList(),
-            'success' => true,
+        $this->jsonOutput([
+            'table'     => $this->getTasksModel()->getList(),
+            'success'   => true,
         ]);
     }
 
-    function actionAddTask($request)
+    /** @noinspection PhpUnused */
+    public function actionAddTask($request)
     {
         if (!empty($request['id'])) {
-            if (!$this->user->isAdmin())
+            if (!$this->user->isAdmin()) {
                 $result = [
                     'success' => 'error',
                     'message' => 'Unauthorized'
                 ];
-            else
+            } else {
                 $result = $this->getTasksModel()->updateTask($request);
-        }
-        else
+            }
+        } else {
             $result = $this->getTasksModel()->addTask($request);
+        }
 
-        return $this->jsonOutput($result);
+        $this->jsonOutput($result);
     }
-
 }

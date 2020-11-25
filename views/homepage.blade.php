@@ -4,41 +4,30 @@
 
 @section('js')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="public/assets/js/homepage.js"></script>
 <script>
-@if ($user['logged'])
-
-function onInitpage(table)
+function onInitPage(table)
 {
-    $('tr', table).on('click', function() {
-
-	// First line - skip
-        if ($(this).prev().length == 0) return false;
-
+    $('tr', table).on('click', function () {
+    @if ($user['logged'])
         if ($(this).hasClass('selected')) {
             // Remove selected
             $(this).removeClass('selected');
             tableSelect(null);
-        }
-        else {
+        } else {
             // Remove old
             $('tr.selected', table).removeClass('selected');
             // Set new
-            if (tableSelect($(this)))
+            if (tableSelect($(this))) {
                 $(this).addClass('selected');
+            }
         }
+        @else
+        return false;
+        @endif
     });
 }
-
-@else
-
-function onInitpage(table)
-{
-
-}
-
-@endif
 </script>
-<script src="public/assets/js/homepage.js"></script>
 @endsection
 
 @section('content')
@@ -93,8 +82,8 @@ function onInitpage(table)
                     <div class="form-check col-sm-3 text-right">
                         @if ($user['logged'])
                         <input type="checkbox" class="taskCompleted form-check-input"
-                            id="formTaskCompleted" name="taskCompleted" onclick=false
-                            @if (isset($taskCompleted) and $taskCompleted) checkbox @endif 
+                            id="formTaskCompleted" name="taskCompleted"
+                            @if (isset($taskCompleted) && $taskCompleted) checkbox @endif
                             title="Completed"
                             tabindex="4">
                         <label class="form-check-label d-sm-none d-md-inline"
